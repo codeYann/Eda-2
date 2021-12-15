@@ -1,4 +1,4 @@
-# Eda-1 :book: :computer:
+# Eda-2 :book: :computer:
 
 Segundo trabalho da disciplina de Estruturas de Dados Avançadas.
 
