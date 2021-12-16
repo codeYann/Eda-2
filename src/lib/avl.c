@@ -99,12 +99,12 @@ Avl* CreateAvl() {
   return avl;
 }
 
-Node *insertAVL(Node *root, int key, int *flag) {
+Node *insertAvlRec(Node *root, int key, int *flag) {
   if (root == NULL) {
     root = CreateNode(key);
   } else {
     if (key < root->key) {
-      root->left = insertAVL(root->left, key, flag);
+      root->left = insertAvlRec(root->left, key, flag);
       if (*flag) {
         switch (root->balancing) {
         case 1:
@@ -120,7 +120,7 @@ Node *insertAVL(Node *root, int key, int *flag) {
         }
       }
     } else if (key > root->key) {
-      root->right = insertAVL(root->right, key, flag);
+      root->right = insertAvlRec(root->right, key, flag);
       if (*flag == 1) {
         switch (root->balancing) {
         case -1:
@@ -144,7 +144,7 @@ Node *insertAVL(Node *root, int key, int *flag) {
 
 void Insert(Avl* tree, int key) {
   int flag = 1;
-  tree->root = insertAVL(tree->root, key, &flag);
+  tree->root = insertAvlRec(tree->root, key, &flag);
 }
 
 void PreOrder(Node* root) {
@@ -169,4 +169,36 @@ void PostOrder(Node* root) {
   PostOrder(root->left);
   PostOrder(root->right);
   printf(" %d ", root->key);
+}
+
+void isAvlRec(Node* root, bool* flag) {
+  if (root == NULL)
+    return;
+  isAvlRec(root->left, flag);
+  isAvlRec(root->right, flag);
+  int vertice = Balanced(root);
+  if (vertice < -1 && vertice > 1) {
+    *flag = false;
+    return;
+  }
+}
+
+bool IsAVL(Avl* tree) {
+  bool status = true;
+  isAvlRec(tree->root, &status);
+  return status;
+}
+
+void sizeAvlRec(Node* root, int* size) {
+  if (root == NULL)
+    return ;
+  *size += 1;
+  sizeAvlRec(root->left, size);
+  sizeAvlRec(root->right, size);
+}
+
+int SizeAvl(Avl* tree) {
+  int count = 0;
+  sizeAvlRec(tree->root, &count);
+  return count;
 }
