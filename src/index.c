@@ -20,6 +20,7 @@ int main(int argc, char** argv) {
 
   InOrder(a->root);
 
-  printf("\nOlá, mundo!");
+  printf("\nresult => %d\n", IsAVL(a));
+  printf("Size => %d\n", SizeAvl(a));
   return 0;
 }
