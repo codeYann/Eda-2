@@ -1,3 +1,4 @@
+#include "stdbool.h"
 #ifndef AVL
 #define AVL
 
@@ -21,5 +22,7 @@ void PreOrder(Node* root);
 void InOrder(Node* root);
 void PostOrder(Node* root);
 
+bool IsAVL(Avl* tree);
+int SizeAvl(Avl* tree);
 
 #endif
