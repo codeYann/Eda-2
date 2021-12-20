@@ -13,7 +13,6 @@ typedef struct node
 typedef struct
 {
   Node *root;
-  int length;
 } Avl;
 
 Node *CreateNode(int key);
