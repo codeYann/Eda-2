@@ -6,7 +6,8 @@
 
 #define LENGTH 10000
 
-bool checkNumber(int* list, int n, int number) {
+bool checkNumber(int* list, int n, int number)
+{
   int temp = list[0];
   for (int i = 1; i < n; i++) {
     if (temp == number) {
@@ -19,10 +20,10 @@ bool checkNumber(int* list, int n, int number) {
 
 int *listFill(int n)
 {
-  int repair = 200000;
+  int repair = 200001;
   int semente;
-  srand(time(NULL));
   int *list = malloc(sizeof(int) * n);
+  srand(time(NULL));
   for (int i = 0; i < n; i++) {
     semente = (rand() % n);
     list[i] = semente;
@@ -43,14 +44,19 @@ void AvlInsert(Avl *tree, int *list, int n)
 
 int main(int argc, char **argv)
 {
-  Avl *tree = CreateAvl();
-  int *list = listFill(LENGTH);
-  AvlInsert(tree, list, LENGTH);
+  Avl *tree;
+  int *list;
+  for (int i = 0; i < LENGTH; i++) {
+    tree = CreateAvl();
+    list = listFill(LENGTH);
+    AvlInsert(tree, list, LENGTH);
 
-  printf("\nA árvore é avl? => %d\n", IsAVL(tree));
-  printf("Tamanho da árvore avl => %d\n", SizeAvl(tree));
-  ClearNodes(&tree->root);
-  printf("\nA árvore é avl? => %d\n", IsAVL(tree));
-  printf("Tamanho da árvore avl => %d\n", SizeAvl(tree));
+    printf("\nA árvore é avl? => %d\n", IsAVL(tree));
+    printf("Tamanho da árvore avl => %d\n", SizeAvl(tree));
+    ClearNodes(&tree->root);   
+    free(tree);
+    free(list);
+  }
+
   return 0;
 }
