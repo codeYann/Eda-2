@@ -2,13 +2,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int max(int k, int t)
-{
-  if (t > k)
-    return t;
-  return k;
-}
-
 int Height(Node *node)
 {
   if (node == NULL) 
@@ -137,7 +130,7 @@ void PreOrder(Node *root)
 {
   if (root == NULL)
     return;
-  printf(" %d ", root->key);
+  printf("Key => %d, Bal => %d\n", root->key, root->balancing);
   PreOrder(root->left);
   PreOrder(root->right);
 }
@@ -157,7 +150,7 @@ void PostOrder(Node *root)
     return;
   PostOrder(root->left);
   PostOrder(root->right);
-  printf(" %d ", root->key);
+  printf("Key => %d, Bal => %d\n", root->key, root->balancing);
 }
 
 void clearNodesRec(Node* root) 
@@ -186,8 +179,7 @@ Node *CreateNode(int key)
 
 Avl *CreateAvl()
 {
-  Avl *avl = (Avl *)malloc(sizeof(Avl));
-  avl->length = 0;
+  Avl *avl = (Avl*) malloc(sizeof(Avl));
   avl->root = NULL;
   return avl;
 }
@@ -252,8 +244,7 @@ Node *RightRotateDelete(Node *t, int *flag)
     u->right = t;
     t = u;
     if (u->balancing == -1) {
-      u->balancing = 0;
-      t->balancing = 0;
+      u->balancing = t->right->balancing = 0;
       *flag = 1;
     } else {
       u->balancing = 1;
@@ -267,20 +258,19 @@ Node *RightRotateDelete(Node *t, int *flag)
     t->left = v->right;
     v->right = t;
     t = v;
-
     switch (v->balancing) {
-    case -1:
-      u->balancing = 0;
-      t->right->balancing = 1;
-      break;
-    case 0:
-      u->balancing = 0;
-      t->right->balancing = 0;
-      break;
-    case 1:
-      u->balancing = -1;
-      t->right->balancing = 0;
-      break;
+      case 0:
+        u->balancing = 0;
+        t->right->balancing = 0;
+        break;
+      case -1:
+        u->balancing = 0;
+        t->right->balancing = 1;
+        break;
+      case 1:
+        u->balancing = -1;
+        t->right->balancing = 0;
+        break;
     }
     t->balancing = 0;
     *flag = 1;
@@ -312,20 +302,19 @@ Node *LeftRotateDelete(Node *t, int *flag)
     t->right = v->left;
     v->left = t;
     t = v;
-
     switch (v->balancing) {
-    case -1:
-      u->balancing = 0;
-      t->left->balancing = -1;
-      break;
-    case 0:
-      u->balancing = 0;
-      t->left->balancing = 0;
-      break;
-    case 1:
-      u->balancing = 1;
-      t->left->balancing = 0;
-      break;
+      case 0:
+        u->balancing = 0;
+        t->left->balancing = 0;
+        break;
+      case -1:
+        u->balancing = 0;
+        t->left->balancing = -1;
+        break;
+      case 1:
+        u->balancing = 1;
+        t->left->balancing = 0;
+        break;
     }
     t->balancing = 0;
     *flag = 1;
@@ -337,16 +326,16 @@ Node *LeftBalancing(Node *t, int *flag)
 {
   if (*flag == 1) {
     switch (t->balancing) {
-    case -1:
-      t->balancing = 0;
-      break;
-    case 0:
-      t->balancing = 1;
-      *flag = 0;
-      break;
-    case 1:
-      t = LeftRotateDelete(t, flag);
-      break;
+      case -1:
+        t->balancing = 0;
+        break;
+      case 0:
+        t->balancing = 1;
+        *flag = 0;
+        break;
+      case 1:
+        t = LeftRotateDelete(t, flag);
+        break;
     }
   }
   return t;
@@ -356,22 +345,36 @@ Node *RightBalancing(Node *t, int *flag)
 {
   if (*flag == 1) {
     switch (t->balancing) {
-    case 1:
-      t->balancing = 0;
-      break;
-    case 0:
-      t->balancing = -1;
-      *flag = 0;
-      break;
-    case -1:
-      t = RightRotateDelete(t, flag);
-      break;
+      case 1:
+        t->balancing = 0;
+        break;
+      case 0:
+        t->balancing = -1;
+        *flag = 0;
+        break;
+      case -1:
+        t = RightRotateDelete(t, flag);
+        break;
     }
   }
   return t;
 }
 
-void swap(Node *p, Node *q);
+void swap(Node *p, Node *q) {
+  Node* temp;
+  temp->balancing = p->balancing;
+  temp->key = p->key;
+  temp->right = p->right;
+  temp->left = p->right;
+  p->balancing = q->balancing;
+  p->key = q->key;
+  p->right = q->right;
+  p->left = q->left;
+  q->balancing = temp->balancing;
+  q->key = temp->key;
+  q->right = temp->right;
+  q->left = temp->left;
+}
 
 Node *deleteAvlRec(Node *root, int key, int *flag)
 {
@@ -411,7 +414,7 @@ Node *deleteAvlRec(Node *root, int key, int *flag)
               swap(root, pai->left);
               root = deleteAvlRec(root->right, key, flag);
             }
-            root = RightBalancing(root->right, flag);
+            root = RightBalancing(root, flag);
           }
         }
       }
