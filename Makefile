@@ -17,3 +17,9 @@ AVL_REMOVE:
 	./src/avl_remove_test
 	rm $(SOURCE_DIR)/avl_remove_test
 
+APRESENTATION:
+	$(CC) $(SOURCE_DIR)/apresentation_test.c $(SOURCE_C) -o $(SOURCE_DIR)/apresentation
+	./src/apresentation
+	rm $(SOURCE_DIR)/apresentation
+
+
