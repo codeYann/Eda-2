@@ -1,31 +1,28 @@
 #include "avl.h"
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-int Height(Node *node)
-{
-  if (node == NULL) 
+int Height(Node *node) {
+  if (node == NULL)
     return 0;
   else {
     int left = Height(node->left);
     int right = Height(node->right);
     if (left > right) {
       return left + 1;
-    } else {  
+    } else {
       return right + 1;
     }
   }
 }
 
-int Balanced(Node *node)
-{
+int Balanced(Node *node) {
   if (node == NULL)
     return 0;
   return Height(node->right) - Height(node->left);
 }
 
-Node *RightRotate(Node *t, int *flag)
-{
+Node *right_rotate(Node *t, int *flag) {
   Node *u, *v;
   u = t->left;
   if (u->balancing == -1) {
@@ -57,8 +54,7 @@ Node *RightRotate(Node *t, int *flag)
   return t;
 }
 
-Node *LeftRotate(Node *t, int *flag)
-{
+Node *left_rotate(Node *t, int *flag) {
   Node *u, *v;
   u = t->right;
   if (u->balancing == 1) {
@@ -90,12 +86,11 @@ Node *LeftRotate(Node *t, int *flag)
   return t;
 }
 
-void isAvlRec(Node *root, bool *flag) 
-{
+void is_avl_rec(Node *root, bool *flag) {
   if (root == NULL)
     return;
-  isAvlRec(root->left, flag);
-  isAvlRec(root->right, flag);
+  is_avl_rec(root->left, flag);
+  is_avl_rec(root->right, flag);
   int vertice = Balanced(root);
   if (vertice < -1 && vertice > 1) {
     *flag = false;
@@ -103,73 +98,64 @@ void isAvlRec(Node *root, bool *flag)
   }
 }
 
-bool IsAVL(Avl *tree)
-{
+bool is_avl(Avl *tree) {
   bool status = true;
-  isAvlRec(tree->root, &status);
+  is_avl_rec(tree->root, &status);
   return status;
 }
 
-void sizeAvlRec(Node *root, int *size)
-{
+void size_avl_rec(Node *root, int *size) {
   if (root == NULL)
     return;
   *size += 1;
-  sizeAvlRec(root->left, size);
-  sizeAvlRec(root->right, size);
+  size_avl_rec(root->left, size);
+  size_avl_rec(root->right, size);
 }
 
-int SizeAvl(Avl *tree)
-{
+int size_avl(Avl *tree) {
   int count = 0;
-  sizeAvlRec(tree->root, &count);
+  size_avl_rec(tree->root, &count);
   return count;
 }
 
-void PreOrder(Node *root)
-{
+void pre_order(Node *root) {
   if (root == NULL)
     return;
   printf("Key => %d, Bal => %d\n", root->key, root->balancing);
-  PreOrder(root->left);
-  PreOrder(root->right);
+  pre_order(root->left);
+  pre_order(root->right);
 }
 
-void InOrder(Node *root)
-{
+void in_order(Node *root) {
   if (root == NULL)
     return;
-  InOrder(root->left);
+  in_order(root->left);
   printf("Key => %d, Bal => %d\n", root->key, root->balancing);
-  InOrder(root->right);
+  in_order(root->right);
 }
 
-void PostOrder(Node *root)
-{
+void post_order(Node *root) {
   if (root == NULL)
     return;
-  PostOrder(root->left);
-  PostOrder(root->right);
+  post_order(root->left);
+  post_order(root->right);
   printf("Key => %d, Bal => %d\n", root->key, root->balancing);
 }
 
-void clearNodesRec(Node* root) 
-{
-  if (root == NULL) 
+void clear_nodes_rec(Node *root) {
+  if (root == NULL)
     return;
-  clearNodesRec(root->left);
-  clearNodesRec(root->right);
+  clear_nodes_rec(root->left);
+  clear_nodes_rec(root->right);
   free(root);
 }
 
-void ClearNodes(Node **root) 
-{
-  clearNodesRec(*root);
+void clear_nodes(Node **root) {
+  clear_nodes_rec(*root);
   *root = NULL;
 }
 
-Node *CreateNode(int key)
-{
+Node *create_node(int key) {
   Node *node = (Node *)malloc(sizeof(Node));
   node->key = key;
   node->left = node->right = NULL;
@@ -177,21 +163,19 @@ Node *CreateNode(int key)
   return node;
 }
 
-Avl *CreateAvl()
-{
-  Avl *avl = (Avl*) malloc(sizeof(Avl));
+Avl *create_avl() {
+  Avl *avl = (Avl *)malloc(sizeof(Avl));
   avl->root = NULL;
   return avl;
 }
 
-Node *insertAvlRec(Node *root, int key, int *flag)
-{
+Node *insert_avl_rec(Node *root, int key, int *flag) {
   if (root == NULL) {
-    root = CreateNode(key);
+    root = create_node(key);
     *flag = 1;
   } else {
     if (key < root->key) {
-      root->left = insertAvlRec(root->left, key, flag);
+      root->left = insert_avl_rec(root->left, key, flag);
       if (*flag) {
         switch (root->balancing) {
         case 1:
@@ -202,13 +186,13 @@ Node *insertAvlRec(Node *root, int key, int *flag)
           root->balancing = -1;
           break;
         case -1:
-          root = RightRotate(root, flag);
+          root = right_rotate(root, flag);
           break;
         }
       }
     } else if (key > root->key) {
-      root->right = insertAvlRec(root->right, key, flag);
-      if (*flag == 1){
+      root->right = insert_avl_rec(root->right, key, flag);
+      if (*flag == 1) {
         switch (root->balancing) {
         case -1:
           root->balancing = 0;
@@ -218,7 +202,7 @@ Node *insertAvlRec(Node *root, int key, int *flag)
           root->balancing = 1;
           break;
         case 1:
-          root = LeftRotate(root, flag);
+          root = left_rotate(root, flag);
           break;
         }
       }
@@ -229,14 +213,12 @@ Node *insertAvlRec(Node *root, int key, int *flag)
   return root;
 }
 
-void Insert(Avl *tree, int key)
-{
+void Insert(Avl *tree, int key) {
   int flag = 1;
-  tree->root = insertAvlRec(tree->root, key, &flag);
+  tree->root = insert_avl_rec(tree->root, key, &flag);
 }
 
-Node *RightRotateDelete(Node *t, int *flag)
-{
+Node *right_rotate_delete(Node *t, int *flag) {
   Node *u, *v;
   u = t->left;
   if (u->balancing <= 0) {
@@ -259,18 +241,18 @@ Node *RightRotateDelete(Node *t, int *flag)
     v->right = t;
     t = v;
     switch (v->balancing) {
-      case 0:
-        u->balancing = 0;
-        t->right->balancing = 0;
-        break;
-      case -1:
-        u->balancing = 0;
-        t->right->balancing = 1;
-        break;
-      case 1:
-        u->balancing = -1;
-        t->right->balancing = 0;
-        break;
+    case 0:
+      u->balancing = 0;
+      t->right->balancing = 0;
+      break;
+    case -1:
+      u->balancing = 0;
+      t->right->balancing = 1;
+      break;
+    case 1:
+      u->balancing = -1;
+      t->right->balancing = 0;
+      break;
     }
     t->balancing = 0;
     *flag = 1;
@@ -278,8 +260,7 @@ Node *RightRotateDelete(Node *t, int *flag)
   return t;
 }
 
-Node *LeftRotateDelete(Node *t, int *flag)
-{
+Node *left_rotate_delete(Node *t, int *flag) {
   Node *u, *v;
   u = t->right;
   if (u->balancing >= 0) {
@@ -303,18 +284,18 @@ Node *LeftRotateDelete(Node *t, int *flag)
     v->left = t;
     t = v;
     switch (v->balancing) {
-      case 0:
-        u->balancing = 0;
-        t->left->balancing = 0;
-        break;
-      case -1:
-        u->balancing = 0;
-        t->left->balancing = -1;
-        break;
-      case 1:
-        u->balancing = 1;
-        t->left->balancing = 0;
-        break;
+    case 0:
+      u->balancing = 0;
+      t->left->balancing = 0;
+      break;
+    case -1:
+      u->balancing = 0;
+      t->left->balancing = -1;
+      break;
+    case 1:
+      u->balancing = 1;
+      t->left->balancing = 0;
+      break;
     }
     t->balancing = 0;
     *flag = 1;
@@ -322,46 +303,44 @@ Node *LeftRotateDelete(Node *t, int *flag)
   return t;
 }
 
-Node *LeftBalancing(Node *t, int *flag)
-{
+Node *left_balancing(Node *t, int *flag) {
   if (*flag == 1) {
     switch (t->balancing) {
-      case -1:
-        t->balancing = 0;
-        break;
-      case 0:
-        t->balancing = 1;
-        *flag = 0;
-        break;
-      case 1:
-        t = LeftRotateDelete(t, flag);
-        break;
+    case -1:
+      t->balancing = 0;
+      break;
+    case 0:
+      t->balancing = 1;
+      *flag = 0;
+      break;
+    case 1:
+      t = left_rotate_delete(t, flag);
+      break;
     }
   }
   return t;
 }
 
-Node *RightBalancing(Node *t, int *flag)
-{
+Node *right_balancing(Node *t, int *flag) {
   if (*flag == 1) {
     switch (t->balancing) {
-      case 1:
-        t->balancing = 0;
-        break;
-      case 0:
-        t->balancing = -1;
-        *flag = 0;
-        break;
-      case -1:
-        t = RightRotateDelete(t, flag);
-        break;
+    case 1:
+      t->balancing = 0;
+      break;
+    case 0:
+      t->balancing = -1;
+      *flag = 0;
+      break;
+    case -1:
+      t = right_rotate_delete(t, flag);
+      break;
     }
   }
   return t;
 }
 
 void swap(Node *p, Node *q) {
-  Node* temp;
+  Node *temp;
   temp->balancing = p->balancing;
   temp->key = p->key;
   temp->right = p->right;
@@ -376,19 +355,18 @@ void swap(Node *p, Node *q) {
   q->left = temp->left;
 }
 
-Node *deleteAvlRec(Node *root, int key, int *flag)
-{
+Node *delete_avl_rec(Node *root, int key, int *flag) {
   if (root == NULL) {
     printf("Elemento não encontrado!\n");
     *flag = 0;
   } else {
     if (key < root->key) {
-      root->left = deleteAvlRec(root->left, key, flag);
-      root = LeftBalancing(root, flag);
+      root->left = delete_avl_rec(root->left, key, flag);
+      root = left_balancing(root, flag);
     } else {
       if (key > root->key) {
-        root->right = deleteAvlRec(root->right, key, flag);
-        root = RightBalancing(root, flag);
+        root->right = delete_avl_rec(root->right, key, flag);
+        root = right_balancing(root, flag);
       } else {
         Node *aux = root;
         if (root->left == NULL) {
@@ -412,9 +390,9 @@ Node *deleteAvlRec(Node *root, int key, int *flag)
                 s = s->left;
               }
               swap(root, pai->left);
-              root = deleteAvlRec(root->right, key, flag);
+              root = delete_avl_rec(root->right, key, flag);
             }
-            root = RightBalancing(root, flag);
+            root = right_balancing(root, flag);
           }
         }
       }
@@ -423,8 +401,7 @@ Node *deleteAvlRec(Node *root, int key, int *flag)
   return root;
 }
 
-void Delete(Avl *tree, int key)
-{
+void Delete(Avl *tree, int key) {
   int flag = 1;
-  tree->root = deleteAvlRec(tree->root, key, &flag);
+  tree->root = delete_avl_rec(tree->root, key, &flag);
 }
