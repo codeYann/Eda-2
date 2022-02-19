@@ -1,10 +1,9 @@
-#include <stdio.h>
-#include <time.h>
-#include <stdlib.h>
 #include "./lib/avl.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
-bool checkNumber(int* list, int n, int number)
-{
+bool checkNumber(int *list, int n, int number) {
   for (int i = 0; i < n; i++) {
     if (list[i] != number)
       continue;
@@ -14,15 +13,14 @@ bool checkNumber(int* list, int n, int number)
   return false;
 }
 
-int main(int argc, char **argv)
-{
-  Avl *main = CreateAvl();
+int main(int argc, char **argv) {
+  Avl *main = create_avl();
 
   int list[100];
   int semente, repair = 101;
   srand(time(NULL));
 
-  for(int i = 0; i < 100; i++) {
+  for (int i = 0; i < 100; i++) {
     semente = rand() % 100;
     list[i] = semente;
     if (checkNumber(list, 100, semente)) {
@@ -35,10 +33,9 @@ int main(int argc, char **argv)
     Insert(main, list[i]);
   }
 
-  InOrder(main->root);
-  printf("\nA árvore é avl? => %d\n", IsAVL(main));
-  printf("Tamanho da árvore avl => %d\n", SizeAvl(main));
-   
+  in_order(main->root);
+  printf("\nA árvore é avl? => %d\n", is_avl(main));
+  printf("Tamanho da árvore avl => %d\n", size_avl(main));
 
- return 0;
+  return 0;
 }
